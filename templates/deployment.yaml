@@ -36,13 +36,19 @@ spec:
             - name: ALLOWED_HOSTNAMES
               value: {{ required "allowed_hostnames is required" .Values.allowed_hostnames | join "," | quote }}
             {{- end }}
+            {{- if .Values.postgreql_url }}
+            - name: POSTGRESQL_URL
+              value: {{ .Values.postgreql_url | quote }}
+            {{- end }}
+            {{- if .Values.redis_uri }}
             - name: REDIS_URI
-              value: {{ required "redis_uri required" .Values.redis_uri | quote }}
+              value: {{ .Values.redis_uri | quote }}
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: "redis"
                   key: "redis-password"
+            {{- end }}
           livenessProbe:
             httpGet:
               path: /healthcheck
